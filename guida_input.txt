@@ -1,0 +1,154 @@
+Legenda
+O = obbligatorio per la struttura del file.
+F = facoltativo. Se non disponibile, omettere il dato.
+C = richiesto solo per alcune metriche o configurazioni.
+N/D = limite minimo/massimo non espresso come numero.
+
+FILE | DATO | TIPO | OBBLIGO | MIN VALUE | MAX VALUE | VALORI AMMESSI | NOTE
+--------------------------------------------------------------------------------------
+er_schema.json | format_version | stringa | O | N/D | N/D | "1.0" |
+er_schema.json | entities | array | O | 1 elemento | nessun limite | oggetti che descrivono le entità |
+er_schema.json | entities[].name | stringa | O | non vuota | nessun limite | nome univoco dell'entità |
+er_schema.json | entities[].attributes | array | O | 0 elementi | nessun limite | oggetti che descrivono gli attributi |
+er_schema.json | entities[].attributes[].name | stringa | O | non vuota | nessun limite | univoca nell'entità |
+er_schema.json | entities[].attributes[].type | stringa enum | O | N/D | N/D | string, integer, number, boolean, date, time, datetime |
+er_schema.json | entities[].attributes[].cardinality | oggetto | O | N/D | N/D | deve contenere min e max |
+er_schema.json | entities[].attributes[].cardinality.min | intero | O | 0 | cardinality.max se numerico | >= 0 |
+er_schema.json | entities[].attributes[].cardinality.max | intero o stringa | O | 1 | nessun limite concettuale | intero >= 1 oppure "N" | Se numerico deve essere >= min.
+er_schema.json | entities[].identifier | array di stringhe | O | 1 elemento | nessun limite | attributi e/o relazioni incidenti | I valori devono essere distinti. Un nome non può essere ambiguo tra attributo e relazione.
+er_schema.json | relationships | array | O | 0 elementi | nessun limite | oggetti che descrivono le relazioni |
+er_schema.json | relationships[].name | stringa | O | non vuota | nessun limite | nome univoco della relazione |
+er_schema.json | relationships[].attributes | array | O | 0 elementi | nessun limite | oggetti che descrivono gli attributi |
+er_schema.json | relationships[].attributes[].name | stringa | O | non vuota | nessun limite | univoca nella relazione |
+er_schema.json | relationships[].attributes[].type | stringa enum | O | N/D | N/D | string, integer, number, boolean, date, time, datetime |
+er_schema.json | relationships[].attributes[].cardinality | oggetto | O | N/D | N/D | deve contenere min e max |
+er_schema.json | relationships[].attributes[].cardinality.min | intero | O | 0 | cardinality.max se numerico | >= 0 |
+er_schema.json | relationships[].attributes[].cardinality.max | intero o stringa | O | 1 | nessun limite concettuale | intero >= 1 oppure "N" |
+er_schema.json | relationships[].sides | array | O | 2 elementi | 2 elementi | esattamente due lati |
+er_schema.json | relationships[].sides[].entity | stringa | O | N/D | N/D | nome di entità esistente |
+er_schema.json | relationships[].sides[].role | stringa | C | non vuota | nessun limite | testo libero | Obbligatoria sui due lati di una self-relationship. I valori di role devono essere diversi.
+er_schema.json | relationships[].sides[].cardinality | oggetto | O | N/D | N/D | deve contenere min e max |
+er_schema.json | relationships[].sides[].cardinality.min | intero | O | 0 | cardinality.max se numerico | >= 0 |
+er_schema.json | relationships[].sides[].cardinality.max | intero o stringa | O | 1 | nessun limite concettuale | intero >= 1 oppure "N" |
+data_system.json | format_version | stringa | O | N/D | N/D | "1.0" |
+data_system.json | evaluation | oggetto | O | N/D | N/D | oggetto JSON |
+data_system.json | data_statistics | oggetto | O | N/D | N/D | oggetto JSON |
+data_system.json | query_workload | oggetto | O | N/D | N/D | oggetto JSON |
+data_system.json | update_workload | oggetto | O | N/D | N/D | oggetto JSON |
+data_system.json | system | oggetto | O | N/D | N/D | oggetto JSON |
+data_system.json | indexes | array | O | 0 elementi | nessun limite | oggetti che descrivono gli indici |
+data_system.json | migration | oggetto | C | N/D | N/D | oggetto JSON | Necessario per la metrica 17 con lifecycle_scenario="migration".
+data_system.json | evaluation.time_unit | stringa | O | non vuota | nessun limite | testo libero, ad es. year, month, day | Non avvengono conversioni automatiche.
+data_system.json | evaluation.planning_horizon | numero | C | 0 | nessun limite | >= 0 | Richiesto dalla metrica 10.
+data_system.json | evaluation.query_cost_weights | oggetto | C | N/D | N/D | scan, unwind, lookup | Richiesto dalle metriche 1 e 2.
+data_system.json | evaluation.query_cost_weights.scan | numero | C | 0 | nessun limite | >= 0 | Tutti e tre i pesi sono richiesti dalle metriche 1 e 2.
+data_system.json | evaluation.query_cost_weights.unwind | numero | C | 0 | nessun limite | >= 0 | Tutti e tre i pesi sono richiesti dalle metriche 1 e 2.
+data_system.json | evaluation.query_cost_weights.lookup | numero | C | 0 | nessun limite | >= 0 | Tutti e tre i pesi sono richiesti dalle metriche 1 e 2.
+data_system.json | evaluation.allow_information_loss | booleano | O | N/D | N/D | true, false |
+data_system.json | evaluation.lifecycle_scenario | stringa enum | C | N/D | N/D | create, migration | Richiesto dalla metrica 17.
+data_system.json | data_statistics.entities | oggetto | O | N/D | N/D | chiavi = nomi di entità ER |
+data_system.json | data_statistics.entities.<E> | oggetto | C | N/D | N/D | statistiche dell'entità |
+data_system.json | data_statistics.entities.<E>.instances | intero | C | 0 | nessun limite | >= 0 |
+data_system.json | data_statistics.entities.<E>.new_instances_per_time_unit | numero | C | 0 | nessun limite | >= 0 |
+data_system.json | data_statistics.entities.<E>.working_set_fraction | frazione | C | 0 | 1 | [0,1] |
+data_system.json | data_statistics.entities.<E>.attributes | oggetto | C | N/D | N/D | chiavi = attributi di E | Se omesso, viene trattato come un oggetto vuoto durante la validazione.
+data_system.json | data_statistics.entities.<E>.attributes.<A> | oggetto | C | N/D | N/D | statistiche dell'attributo |
+data_system.json | data_statistics.entities.<E>.attributes.<A>.avg_size_bytes | numero | C | 0 | max_size_bytes se presente | >= 0 |
+data_system.json | data_statistics.entities.<E>.attributes.<A>.max_size_bytes | numero | C | avg_size_bytes se presente | nessun limite | >= 0 |
+data_system.json | data_statistics.entities.<E>.attributes.<A>.avg_values | numero | C | cardinality.min | cardinality.max se finito | >= 0 | Per cardinality.max="N" non c'è un massimo numerico imposto.
+data_system.json | data_statistics.relationships | oggetto | O | N/D | N/D | chiavi = nomi di relazioni ER |
+data_system.json | data_statistics.relationships.<R> | oggetto | C | N/D | N/D | statistiche della relazione |
+data_system.json | data_statistics.relationships.<R>.sides | array | O se <R> presente | 2 elementi | 2 elementi | esattamente due lati |
+data_system.json | data_statistics.relationships.<R>.sides[].entity | stringa | O | N/D | N/D | estremo della relazione | Per una self-relationship, mantenere lo stesso ordine dei lati definito nello schema ER.
+data_system.json | data_statistics.relationships.<R>.sides[].avg_connected | numero | C | 0 per self-relationship / cardinality.min negli altri casi | max_connected, cardinality_limit e max ER se presenti | >= 0 |
+data_system.json | data_statistics.relationships.<R>.sides[].max_connected | intero | C | 0 per self-relationship / cardinality.min negli altri casi | cardinality_limit e max ER se finito | >= 0 |
+data_system.json | data_statistics.relationships.<R>.sides[].growth_per_time_unit | numero | C | 0 | nessun limite | >= 0 |
+data_system.json | data_statistics.relationships.<R>.sides[].future_avg_connected | numero | C | 0 per self-relationship / cardinality.min negli altri casi | cardinality_limit e max ER se presenti | >= 0 | Se presente prevale sulla previsione lineare della metrica 10.
+data_system.json | data_statistics.relationships.<R>.sides[].cardinality_limit | intero | C | 0 per self-relationship / cardinality.min negli altri casi | nessun limite | >= 0 | Deve essere >= max_connected se entrambi presenti.
+data_system.json | data_statistics.relationships.<R>.attributes | oggetto | C | N/D | N/D | chiavi = attributi di R |
+data_system.json | data_statistics.relationships.<R>.attributes.<A> | oggetto | C | N/D | N/D | statistiche dell'attributo della relazione |
+data_system.json | data_statistics.relationships.<R>.attributes.<A>.avg_size_bytes | numero | C | 0 | max_size_bytes se presente | >= 0 |
+data_system.json | data_statistics.relationships.<R>.attributes.<A>.max_size_bytes | numero | C | avg_size_bytes se presente | nessun limite | >= 0 |
+data_system.json | data_statistics.relationships.<R>.attributes.<A>.avg_values | numero | C | cardinality.min | cardinality.max se finito | >= 0 |
+data_system.json | data_statistics.path_statistics | array | C | 0 elementi | nessun limite | oggetti che descrivono i percorsi |
+data_system.json | data_statistics.path_statistics[].from | stringa | O se elemento presente | N/D | N/D | entità esistente |
+data_system.json | data_statistics.path_statistics[].to | stringa | O se elemento presente | N/D | N/D | entità esistente |
+data_system.json | data_statistics.path_statistics[].relationships | array di stringhe | O se elemento presente | 1 elemento | nessun limite | percorso coerente nello schema |
+data_system.json | data_statistics.path_statistics[].avg_distinct_targets | numero | C | 0 | nessun limite | >= 0 |
+data_system.json | data_statistics.path_statistics[].probability_zero_targets | frazione | C | 0 | 1 | [0,1] | Se presenti tutte e tre, la somma deve essere 1 (tolleranza 1e-6).
+data_system.json | data_statistics.path_statistics[].probability_one_target | frazione | C | 0 | 1 | [0,1] | Se presenti tutte e tre, la somma deve essere 1 (tolleranza 1e-6).
+data_system.json | data_statistics.path_statistics[].probability_multiple_targets | frazione | C | 0 | 1 | [0,1] | Se presenti tutte e tre, la somma deve essere 1 (tolleranza 1e-6).
+data_system.json | query_workload.frequency_type | stringa enum | O | N/D | N/D | absolute, weight |
+data_system.json | query_workload.queries | array | O | 0 elementi | nessun limite | oggetti che descrivono le query |
+data_system.json | query_workload.queries[].name | stringa | O | non vuota | nessun limite | univoca nel workload |
+data_system.json | query_workload.queries[].frequency | numero | O | 0 | nessun limite | >= 0 |
+data_system.json | query_workload.queries[].target_entity | stringa | O | N/D | N/D | entità ER esistente |
+data_system.json | query_workload.queries[].selection_paths | array | O | 1 percorso | nessun limite | ogni percorso è un array non vuoto |
+data_system.json | query_workload.queries[].projection_paths | array | O | 1 percorso | nessun limite | ogni percorso è un array non vuoto |
+data_system.json | query_workload.queries[].selection_paths[][] | oggetto passo | O | N/D | N/D | passo del percorso di selezione | Primo passo: solo entity. Passi successivi: relationship + entity, con remote_fraction_if_separate opzionale.
+data_system.json | query_workload.queries[].selection_paths[][].entity | stringa | O | N/D | N/D | entità ER esistente | Il primo passo deve coincidere con target_entity.
+data_system.json | query_workload.queries[].selection_paths[][].relationship | stringa | O dopo il primo passo | N/D | N/D | relazione ER coerente con il passo precedente |
+data_system.json | query_workload.queries[].selection_paths[][].remote_fraction_if_separate | frazione | C | 0 | 1 | [0,1] | Richiesta dalla metrica 11 su sistemi multi-nodo per i passi pertinenti.
+data_system.json | query_workload.queries[].projection_paths[][] | oggetto passo | O | N/D | N/D | passo del percorso di proiezione | Primo passo: solo entity. Passi successivi: relationship + entity, con remote_fraction_if_separate opzionale.
+data_system.json | query_workload.queries[].projection_paths[][].entity | stringa | O | N/D | N/D | entità ER esistente | Il primo passo deve coincidere con target_entity.
+data_system.json | query_workload.queries[].projection_paths[][].relationship | stringa | O dopo il primo passo | N/D | N/D | relazione ER coerente con il passo precedente |
+data_system.json | query_workload.queries[].projection_paths[][].remote_fraction_if_separate | frazione | C | 0 | 1 | [0,1] | Richiesta dalla metrica 11 su sistemi multi-nodo per i passi pertinenti.
+data_system.json | query_workload.queries[].predicates | array | F | 0 elementi | nessun limite | oggetti che descrivono i predicati |
+data_system.json | query_workload.queries[].predicates[].entity | stringa | O se predicato presente | N/D | N/D | entità presente nei selection_paths |
+data_system.json | query_workload.queries[].predicates[].attribute | stringa | O se predicato presente | N/D | N/D | attributo esistente |
+data_system.json | query_workload.queries[].predicates[].operator | stringa | O se predicato presente | non vuota | nessun limite | testo libero, ad es. eq, lt, gt |
+data_system.json | query_workload.queries[].predicates[].selectivity | frazione | C | 0 | 1 | [0,1] | Richiesta dalle metriche 3, 4 e 5 per le query con frequenza positiva.
+data_system.json | query_workload.queries[].predicates[].index | stringa | F | N/D | N/D | nome di un indice definito |
+data_system.json | query_workload.queries[].predicates[].post_index_selectivity | frazione | F | 0 | 1 | [0,1] |
+data_system.json | query_workload.queries[].projection_attributes | array | F | 0 elementi | nessun limite | oggetti che descrivono i dati proiettati |
+data_system.json | query_workload.queries[].projection_attributes[].entity | stringa | O se elemento presente | N/D | N/D | entità presente nei projection_paths |
+data_system.json | query_workload.queries[].projection_attributes[].attribute | stringa | O se elemento presente | N/D | N/D | attributo esistente |
+data_system.json | query_workload.queries[].estimated_result_cardinality | numero | F | 0 | nessun limite | >= 0 |
+data_system.json | query_workload.queries[].estimated_avg_result_size_bytes | numero | F | 0 | nessun limite | >= 0 |
+data_system.json | query_workload.queries[].temporary_operations | array | F | 0 elementi | nessun limite | oggetti che descrivono le operazioni temporanee |
+data_system.json | query_workload.queries[].temporary_operations[].type | stringa | O se elemento presente | non vuota | nessun limite | testo libero, ad es. sort, group |
+data_system.json | query_workload.queries[].temporary_operations[].after_entity | stringa | O se elemento presente | N/D | N/D | entità ER esistente |
+data_system.json | query_workload.queries[].temporary_operations[].items_kept | numero | F | 0 | nessun limite | >= 0 |
+data_system.json | query_workload.queries[].temporary_operations[].avg_item_size_bytes | numero | F | 0 | nessun limite | >= 0 |
+data_system.json | update_workload.frequency_type | stringa enum | O | N/D | N/D | absolute, weight |
+data_system.json | update_workload.updates | array | O | 0 elementi | nessun limite | oggetti che descrivono gli update |
+data_system.json | update_workload.updates[].name | stringa | O | non vuota | nessun limite | univoca nel workload |
+data_system.json | update_workload.updates[].frequency | numero | O | 0 | nessun limite | >= 0 |
+data_system.json | update_workload.updates[].operation | stringa enum | O | N/D | N/D | set_attribute, add_relationship, remove_relationship |
+data_system.json | update_workload.updates[].target | oggetto | O | N/D | N/D | dati dipendenti da operation |
+data_system.json | update_workload.updates[].target.entity | stringa | C | N/D | N/D | entità ER esistente | Obbligatoria per set_attribute.
+data_system.json | update_workload.updates[].target.attribute | stringa | C | N/D | N/D | attributo di target.entity | Obbligatoria per set_attribute.
+data_system.json | update_workload.updates[].target.relationship | stringa | C | N/D | N/D | relazione ER esistente | Obbligatoria per add_relationship/remove_relationship.
+data_system.json | update_workload.updates[].granularity | stringa enum | O | N/D | N/D | field, subdocument, document |
+data_system.json | update_workload.updates[].avg_modified_size_bytes | numero | C | 0 | nessun limite | >= 0 | Per la metrica 15, se specificato, deve essere > 0. Per gli update su una relazione è richiesto.
+data_system.json | indexes[].name | stringa | O se indice presente | non vuota | nessun limite | univoca |
+data_system.json | indexes[].fields | array | O se indice presente | 1 elemento | nessun limite | oggetti entity/attribute |
+data_system.json | indexes[].fields[].entity | stringa | O | N/D | N/D | entità ER esistente |
+data_system.json | indexes[].fields[].attribute | stringa | O | N/D | N/D | attributo esistente |
+data_system.json | indexes[].participation_fraction | frazione | C | 0 | 1 | [0,1] |
+data_system.json | indexes[].avg_entry_memory_bytes | numero | C | 0 | nessun limite | >= 0 |
+data_system.json | indexes[].avg_entry_storage_bytes | numero | C | 0 | nessun limite | >= 0 |
+data_system.json | system.technology | oggetto | O | N/D | N/D | name + version |
+data_system.json | system.technology.name | stringa enum | O | N/D | N/D | mongodb, couchbase |
+data_system.json | system.technology.version | stringa | O | non vuota | nessun limite | testo libero, ad es. 8.0 |
+data_system.json | system.memory | oggetto | C | N/D | N/D | quote di memoria |
+data_system.json | system.memory.data_available_bytes | numero | C | > 0 | nessun limite | > 0 |
+data_system.json | system.memory.index_available_bytes | numero | C | > 0 | nessun limite | > 0 |
+data_system.json | system.temporary_storage | oggetto | C | N/D | N/D | configurazione temporanea |
+data_system.json | system.temporary_storage.memory_limit_bytes | numero | C | > 0 | nessun limite | > 0 |
+data_system.json | system.temporary_storage.spill_allowed | booleano | F | N/D | N/D | true, false | Validato ma non usato nel valore della metrica 8.
+data_system.json | system.temporary_storage.disk_limit_bytes | numero | F | 0 | nessun limite | >= 0 | Validato ma non usato nel valore della metrica 8.
+data_system.json | system.replication | oggetto | C | N/D | N/D | repliche |
+data_system.json | system.replication.document_replicas | intero | C | 0 | nessun limite | >= 0 | Copie aggiuntive: 0 = una copia totale.
+data_system.json | system.replication.index_replicas | intero | C | 0 | nessun limite | >= 0 | Copie aggiuntive.
+data_system.json | system.distribution | oggetto | C | N/D | N/D | distribuzione |
+data_system.json | system.distribution.nodes | intero | C | 1 | nessun limite | >= 1 |
+data_system.json | system.size_estimates | oggetto | C | N/D | N/D | rapporti di dimensione |
+data_system.json | system.size_estimates.memory_ratio | numero | C | > 0 | nessun limite | > 0 |
+data_system.json | system.size_estimates.storage_ratio | numero | C | > 0 | nessun limite | > 0 |
+data_system.json | migration.mode | stringa enum | O se migration presente | N/D | N/D | full_rebuild |
+data_system.json | migration.source_structures | array | O se migration presente | 0 a livello strutturale / 1 con metrica 17 e scenario migration | nessun limite | oggetti che descrivono le sorgenti |
+data_system.json | migration.source_structures[].name | stringa | O | non vuota | nessun limite | univoca |
+data_system.json | migration.source_structures[].instances | intero | O | 0 | nessun limite | >= 0 |
+data_system.json | migration.source_structures[].avg_size_bytes | numero | O | 0 | nessun limite | >= 0 | Dimensione media persistente della sorgente.
+data_system.json | migration.source_structures[].maps_to | array di stringhe | O | 1 elemento | nessun limite | nomi di entità ER |

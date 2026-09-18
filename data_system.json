@@ -1,0 +1,484 @@
+{
+  "format_version": "1.0",
+  "evaluation": {
+    "time_unit": "year",
+    "planning_horizon": 3,
+    "query_cost_weights": {
+      "scan": 1.0,
+      "unwind": 2.0,
+      "lookup": 5.0
+    },
+    "allow_information_loss": true,
+    "lifecycle_scenario": "migration"
+  },
+  "data_statistics": {
+    "entities": {
+      "Person": {
+        "instances": 100,
+        "new_instances_per_time_unit": 10.0,
+        "working_set_fraction": 0.6,
+        "attributes": {
+          "PersonId": {
+            "avg_size_bytes": 12,
+            "max_size_bytes": 24
+          },
+          "Name": {
+            "avg_size_bytes": 30,
+            "max_size_bytes": 100
+          },
+          "Aliases": {
+            "avg_size_bytes": 20,
+            "max_size_bytes": 60,
+            "avg_values": 1.4
+          }
+        }
+      },
+      "Project": {
+        "instances": 20,
+        "new_instances_per_time_unit": 2.0,
+        "working_set_fraction": 0.75,
+        "attributes": {
+          "ProjectId": {
+            "avg_size_bytes": 8,
+            "max_size_bytes": 8
+          },
+          "Title": {
+            "avg_size_bytes": 45,
+            "max_size_bytes": 150
+          },
+          "Budget": {
+            "avg_size_bytes": 8,
+            "max_size_bytes": 8
+          },
+          "Active": {
+            "avg_size_bytes": 1,
+            "max_size_bytes": 1
+          },
+          "StartDate": {
+            "avg_size_bytes": 10,
+            "max_size_bytes": 10
+          },
+          "StartTime": {
+            "avg_size_bytes": 8,
+            "max_size_bytes": 8
+          },
+          "UpdatedAt": {
+            "avg_size_bytes": 20,
+            "max_size_bytes": 24
+          }
+        }
+      },
+      "Task": {
+        "instances": 200,
+        "new_instances_per_time_unit": 40.0,
+        "working_set_fraction": 0.4,
+        "attributes": {
+          "TaskId": {
+            "avg_size_bytes": 16,
+            "max_size_bytes": 32
+          },
+          "Description": {
+            "avg_size_bytes": 120,
+            "max_size_bytes": 1000
+          }
+        }
+      }
+    },
+    "relationships": {
+      "Membership": {
+        "sides": [
+          {
+            "entity": "Person",
+            "avg_connected": 2.0,
+            "max_connected": 5,
+            "growth_per_time_unit": 0.2,
+            "future_avg_connected": 2.6,
+            "cardinality_limit": 6
+          },
+          {
+            "entity": "Project",
+            "avg_connected": 10.0,
+            "max_connected": 20,
+            "growth_per_time_unit": 1.0,
+            "future_avg_connected": 13.0,
+            "cardinality_limit": 25
+          }
+        ],
+        "attributes": {
+          "RoleName": {
+            "avg_size_bytes": 10,
+            "max_size_bytes": 30,
+            "avg_values": 1.2
+          }
+        }
+      },
+      "BelongsTo": {
+        "sides": [
+          {
+            "entity": "Project",
+            "avg_connected": 10.0,
+            "max_connected": 30,
+            "growth_per_time_unit": 1.0,
+            "future_avg_connected": 13.0,
+            "cardinality_limit": 40
+          },
+          {
+            "entity": "Task",
+            "avg_connected": 1.0,
+            "max_connected": 1,
+            "growth_per_time_unit": 0.0,
+            "future_avg_connected": 1.0,
+            "cardinality_limit": 1
+          }
+        ],
+        "attributes": {}
+      },
+      "Mentorship": {
+        "sides": [
+          {
+            "entity": "Person",
+            "avg_connected": 1.2,
+            "max_connected": 5,
+            "growth_per_time_unit": 0.1,
+            "future_avg_connected": 1.5,
+            "cardinality_limit": 6
+          },
+          {
+            "entity": "Person",
+            "avg_connected": 1.2,
+            "max_connected": 5,
+            "growth_per_time_unit": 0.1,
+            "future_avg_connected": 1.5,
+            "cardinality_limit": 6
+          }
+        ],
+        "attributes": {
+          "Since": {
+            "avg_size_bytes": 10,
+            "max_size_bytes": 10,
+            "avg_values": 0.8
+          }
+        }
+      }
+    },
+    "path_statistics": [
+      {
+        "from": "Person",
+        "to": "Project",
+        "relationships": [
+          "Membership"
+        ],
+        "avg_distinct_targets": 2.0,
+        "probability_zero_targets": 0.1,
+        "probability_one_target": 0.3,
+        "probability_multiple_targets": 0.6
+      },
+      {
+        "from": "Project",
+        "to": "Task",
+        "relationships": [
+          "BelongsTo"
+        ],
+        "avg_distinct_targets": 10.0,
+        "probability_zero_targets": 0.05,
+        "probability_one_target": 0.1,
+        "probability_multiple_targets": 0.85
+      }
+    ]
+  },
+  "query_workload": {
+    "frequency_type": "absolute",
+    "queries": [
+      {
+        "name": "q_person_projects",
+        "frequency": 1000,
+        "target_entity": "Person",
+        "selection_paths": [
+          [
+            {
+              "entity": "Person"
+            }
+          ],
+          [
+            {
+              "entity": "Person"
+            },
+            {
+              "relationship": "Membership",
+              "entity": "Project",
+              "remote_fraction_if_separate": 0.25
+            }
+          ]
+        ],
+        "projection_paths": [
+          [
+            {
+              "entity": "Person"
+            }
+          ],
+          [
+            {
+              "entity": "Person"
+            },
+            {
+              "relationship": "Membership",
+              "entity": "Project",
+              "remote_fraction_if_separate": 0.25
+            }
+          ],
+          [
+            {
+              "entity": "Person"
+            },
+            {
+              "relationship": "Mentorship",
+              "entity": "Person",
+              "remote_fraction_if_separate": 0.1
+            }
+          ]
+        ],
+        "predicates": [
+          {
+            "entity": "Person",
+            "attribute": "Name",
+            "operator": "eq",
+            "selectivity": 0.02,
+            "index": "idx_person_name",
+            "post_index_selectivity": 1.0
+          },
+          {
+            "entity": "Project",
+            "attribute": "Title",
+            "operator": "eq",
+            "selectivity": 0.1,
+            "post_index_selectivity": 0.8
+          }
+        ],
+        "projection_attributes": [
+          {
+            "entity": "Person",
+            "attribute": "PersonId"
+          },
+          {
+            "entity": "Person",
+            "attribute": "Name"
+          },
+          {
+            "entity": "Project",
+            "attribute": "ProjectId"
+          },
+          {
+            "entity": "Project",
+            "attribute": "Title"
+          }
+        ],
+        "estimated_result_cardinality": 4,
+        "estimated_avg_result_size_bytes": 180,
+        "temporary_operations": [
+          {
+            "type": "sort",
+            "after_entity": "Project",
+            "items_kept": 20.0,
+            "avg_item_size_bytes": 180.0
+          }
+        ]
+      },
+      {
+        "name": "q_project_tasks",
+        "frequency": 500,
+        "target_entity": "Project",
+        "selection_paths": [
+          [
+            {
+              "entity": "Project"
+            }
+          ]
+        ],
+        "projection_paths": [
+          [
+            {
+              "entity": "Project"
+            },
+            {
+              "relationship": "BelongsTo",
+              "entity": "Task",
+              "remote_fraction_if_separate": 0.2
+            }
+          ]
+        ],
+        "predicates": [
+          {
+            "entity": "Project",
+            "attribute": "ProjectId",
+            "operator": "eq",
+            "selectivity": 0.05,
+            "index": "idx_project_id",
+            "post_index_selectivity": 1.0
+          }
+        ],
+        "projection_attributes": [
+          {
+            "entity": "Task",
+            "attribute": "TaskId"
+          },
+          {
+            "entity": "Task",
+            "attribute": "Description"
+          }
+        ],
+        "estimated_result_cardinality": 10,
+        "estimated_avg_result_size_bytes": 150,
+        "temporary_operations": [
+          {
+            "type": "group",
+            "after_entity": "Task",
+            "items_kept": 10,
+            "avg_item_size_bytes": 150
+          }
+        ]
+      }
+    ]
+  },
+  "update_workload": {
+    "frequency_type": "weight",
+    "updates": [
+      {
+        "name": "u_set_name",
+        "frequency": 0.5,
+        "operation": "set_attribute",
+        "target": {
+          "entity": "Person",
+          "attribute": "Name"
+        },
+        "granularity": "field",
+        "avg_modified_size_bytes": 30
+      },
+      {
+        "name": "u_add_membership",
+        "frequency": 0.3,
+        "operation": "add_relationship",
+        "target": {
+          "relationship": "Membership"
+        },
+        "granularity": "subdocument",
+        "avg_modified_size_bytes": 24
+      },
+      {
+        "name": "u_remove_task_link",
+        "frequency": 0.2,
+        "operation": "remove_relationship",
+        "target": {
+          "relationship": "BelongsTo"
+        },
+        "granularity": "document",
+        "avg_modified_size_bytes": 16
+      }
+    ]
+  },
+  "indexes": [
+    {
+      "name": "idx_person_name",
+      "fields": [
+        {
+          "entity": "Person",
+          "attribute": "Name"
+        }
+      ],
+      "participation_fraction": 1.0,
+      "avg_entry_memory_bytes": 48,
+      "avg_entry_storage_bytes": 40
+    },
+    {
+      "name": "idx_project_id",
+      "fields": [
+        {
+          "entity": "Project",
+          "attribute": "ProjectId"
+        }
+      ],
+      "participation_fraction": 1.0,
+      "avg_entry_memory_bytes": 32,
+      "avg_entry_storage_bytes": 24
+    },
+    {
+      "name": "idx_task_compound",
+      "fields": [
+        {
+          "entity": "Task",
+          "attribute": "TaskId"
+        },
+        {
+          "entity": "Task",
+          "attribute": "Description"
+        }
+      ],
+      "participation_fraction": 0.75,
+      "avg_entry_memory_bytes": 96,
+      "avg_entry_storage_bytes": 72
+    }
+  ],
+  "system": {
+    "technology": {
+      "name": "mongodb",
+      "version": "8.0"
+    },
+    "memory": {
+      "data_available_bytes": 1073741824,
+      "index_available_bytes": 268435456
+    },
+    "temporary_storage": {
+      "memory_limit_bytes": 67108864,
+      "spill_allowed": true,
+      "disk_limit_bytes": 1073741824
+    },
+    "replication": {
+      "document_replicas": 1,
+      "index_replicas": 1
+    },
+    "distribution": {
+      "nodes": 2
+    },
+    "size_estimates": {
+      "memory_ratio": 1.1,
+      "storage_ratio": 0.8
+    }
+  },
+  "migration": {
+    "mode": "full_rebuild",
+    "source_structures": [
+      {
+        "name": "PersonSource",
+        "instances": 100,
+        "avg_size_bytes": 120,
+        "maps_to": [
+          "Person"
+        ]
+      },
+      {
+        "name": "ProjectSource",
+        "instances": 20,
+        "avg_size_bytes": 220,
+        "maps_to": [
+          "Project"
+        ]
+      },
+      {
+        "name": "TaskSource",
+        "instances": 200,
+        "avg_size_bytes": 180,
+        "maps_to": [
+          "Task"
+        ]
+      },
+      {
+        "name": "MembershipSource",
+        "instances": 200,
+        "avg_size_bytes": 48,
+        "maps_to": [
+          "Person",
+          "Project"
+        ]
+      }
+    ]
+  }
+}

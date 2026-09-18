@@ -1,0 +1,211 @@
+{
+  "format_version": "1.0",
+  "entities": [
+    {
+      "name": "Person",
+      "attributes": [
+        {
+          "name": "PersonId",
+          "type": "string",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          }
+        },
+        {
+          "name": "Name",
+          "type": "string",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          }
+        },
+        {
+          "name": "Aliases",
+          "type": "string",
+          "cardinality": {
+            "min": 0,
+            "max": 3
+          }
+        }
+      ],
+      "identifier": [
+        "PersonId"
+      ]
+    },
+    {
+      "name": "Project",
+      "attributes": [
+        {
+          "name": "ProjectId",
+          "type": "integer",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          }
+        },
+        {
+          "name": "Title",
+          "type": "string",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          }
+        },
+        {
+          "name": "Budget",
+          "type": "number",
+          "cardinality": {
+            "min": 0,
+            "max": 1
+          }
+        },
+        {
+          "name": "Active",
+          "type": "boolean",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          }
+        },
+        {
+          "name": "StartDate",
+          "type": "date",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          }
+        },
+        {
+          "name": "StartTime",
+          "type": "time",
+          "cardinality": {
+            "min": 0,
+            "max": 1
+          }
+        },
+        {
+          "name": "UpdatedAt",
+          "type": "datetime",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          }
+        }
+      ],
+      "identifier": [
+        "ProjectId"
+      ]
+    },
+    {
+      "name": "Task",
+      "attributes": [
+        {
+          "name": "TaskId",
+          "type": "string",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          }
+        },
+        {
+          "name": "Description",
+          "type": "string",
+          "cardinality": {
+            "min": 0,
+            "max": 1
+          }
+        }
+      ],
+      "identifier": [
+        "TaskId"
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "name": "Membership",
+      "sides": [
+        {
+          "entity": "Person",
+          "role": "member",
+          "cardinality": {
+            "min": 0,
+            "max": "N"
+          }
+        },
+        {
+          "entity": "Project",
+          "role": "project",
+          "cardinality": {
+            "min": 0,
+            "max": "N"
+          }
+        }
+      ],
+      "attributes": [
+        {
+          "name": "RoleName",
+          "type": "string",
+          "cardinality": {
+            "min": 0,
+            "max": 2
+          }
+        }
+      ]
+    },
+    {
+      "name": "BelongsTo",
+      "sides": [
+        {
+          "entity": "Project",
+          "role": "project",
+          "cardinality": {
+            "min": 0,
+            "max": "N"
+          }
+        },
+        {
+          "entity": "Task",
+          "role": "task",
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          }
+        }
+      ],
+      "attributes": []
+    },
+    {
+      "name": "Mentorship",
+      "sides": [
+        {
+          "entity": "Person",
+          "role": "mentor",
+          "cardinality": {
+            "min": 0,
+            "max": "N"
+          }
+        },
+        {
+          "entity": "Person",
+          "role": "mentee",
+          "cardinality": {
+            "min": 0,
+            "max": "N"
+          }
+        }
+      ],
+      "attributes": [
+        {
+          "name": "Since",
+          "type": "date",
+          "cardinality": {
+            "min": 0,
+            "max": 1
+          }
+        }
+      ]
+    }
+  ]
+}

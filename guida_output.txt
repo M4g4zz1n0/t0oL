@@ -1,0 +1,65 @@
+FILE / MODALITÀ | DATO | TIPO | PRESENZA | MIN VALUE | MAX VALUE | NOTE
+--------------------------------------------------------------------------------------
+labeled_schema.json | format_version | stringa | sempre | N/D | N/D | Vale "1.0".
+labeled_schema.json | candidate_id | stringa | sempre nell'output generato, facoltativo se usato come input | non vuota | nessun limite | ID progressivo della candidata, ad es. L000022.
+labeled_schema.json | technology | oggetto | sempre nell'output generato, facoltativo in input | N/D | N/D | Contiene name e version.
+labeled_schema.json | technology.name | stringa | se technology è presente | N/D | N/D | mongodb oppure couchbase.
+labeled_schema.json | technology.version | stringa | se technology è presente | non vuota | nessun limite | Versione dichiarata nel data_system.
+labeled_schema.json | schema | oggetto | sempre | N/D | N/D | Contiene entities e relationships dello schema ER.
+labeled_schema.json | schema.entities | array | sempre | 1 elemento | nessun limite | Stessa struttura di er_schema.entities.
+labeled_schema.json | schema.relationships | array | sempre | 0 elementi | nessun limite | Stessa struttura di er_schema.relationships.
+labeled_schema.json | labeling | oggetto | sempre | N/D | N/D | Contiene main_entities, entity_labels, encapsulations e references.
+labeled_schema.json | labeling.main_entities | array | sempre | 1 elemento | nessun limite | Una voce per ogni main entity.
+labeled_schema.json | labeling.main_entities[].entity | stringa | sempre per voce | N/D | N/D | Nome dell'entità ER.
+labeled_schema.json | labeling.main_entities[].collection | stringa | sempre per voce | N/D | N/D | Coincide con entity nella versione corrente.
+labeled_schema.json | labeling.entity_labels | array | sempre | numero di entità ER | numero di entità ER | Esattamente una label per ogni entità.
+labeled_schema.json | labeling.entity_labels[].entity | stringa | sempre per voce | N/D | N/D | Nome dell'entità.
+labeled_schema.json | labeling.entity_labels[].label | stringa | sempre per voce | N/D | N/D | Per una main entity: nome della collection. Per una non-main: X, XL, XR o XRL.
+labeled_schema.json | labeling.encapsulations | array | sempre | 0 elementi | nessun limite | Incapsulamenti selezionati.
+labeled_schema.json | labeling.encapsulations[].relationship | stringa | sempre per voce | N/D | N/D | Relazione ER usata.
+labeled_schema.json | labeling.encapsulations[].entity | stringa | sempre per voce | N/D | N/D | Entità figlia.
+labeled_schema.json | labeling.encapsulations[].into | stringa | sempre per voce | N/D | N/D | Entità contenitore.
+labeled_schema.json | labeling.references | array | sempre | 0 elementi | nessun limite | Riferimenti selezionati.
+labeled_schema.json | labeling.references[].relationship | stringa | sempre per voce | N/D | N/D | Relazione ER rappresentata.
+labeled_schema.json | labeling.references[].stored_in | stringa | sempre per voce | N/D | N/D | Entità che memorizza il riferimento.
+labeled_schema.json | labeling.references[].target | stringa | sempre per voce | N/D | N/D | Entità di destinazione.
+labeled_schema.json | labeling.references[].label | stringa enum | sempre per voce | N/D | N/D | id se il target è una main entity, key altrimenti.
+labeled_schema.json | labeling.references[].stored_role | stringa | solo per self-relationship | N/D | N/D | Ruolo del lato stored_in.
+labeled_schema.json | labeling.references[].target_role | stringa | solo per self-relationship | N/D | N/D | Ruolo del lato target.
+labeled_schema.json | partition | array | sempre | numero di main entity | numero di main entity | Un blocco per ogni main entity.
+labeled_schema.json | partition[].collection | stringa | sempre per blocco | N/D | N/D | Nome della collection.
+labeled_schema.json | partition[].main_entity | stringa | sempre per blocco | N/D | N/D | Radice del blocco.
+labeled_schema.json | partition[].entities | array di stringhe | sempre per blocco | 1 elemento | nessun limite | Entità appartenenti alla collection.
+labeled_schema.json | partition[].encapsulation_relationships | array di stringhe | sempre per blocco | 0 elementi | nessun limite | Relazioni usate per gli incapsulamenti del blocco.
+evaluation_results.json (generazione) | optimized_metrics | array | sempre | 5 elementi | 5 elementi | Le cinque metriche scelte, nello stesso ordine.
+evaluation_results.json (generazione) | remaining_metrics | array | sempre | 0 elementi | 12 elementi | Altre metriche calcolabili, ordinate per id.
+evaluation_results.json (valutazione diretta) | candidate_id | stringa | solo se presente nel labeled_schema di input | non vuota | nessun limite | Non viene scritto se assente.
+evaluation_results.json (valutazione diretta) | technology | oggetto | sempre | N/D | N/D | Copia di system.technology.
+evaluation_results.json (valutazione diretta) | technology.name | stringa | sempre | N/D | N/D | mongodb oppure couchbase.
+evaluation_results.json (valutazione diretta) | technology.version | stringa | sempre | non vuota | nessun limite | Versione dichiarata.
+evaluation_results.json (valutazione diretta) | evaluated_metrics | array | sempre se il file viene scritto | 1 elemento | 17 elementi | Metriche richieste che risultano calcolabili.
+evaluation_results.json (array delle metriche) | [].id | intero | sempre per elemento | 1 | 17 | Identificatore della metrica.
+evaluation_results.json (array delle metriche) | [].name | stringa | sempre per elemento | N/D | N/D | Nome tecnico fisso.
+evaluation_results.json (array delle metriche) | [].value | numero | sempre per elemento | dipende dalla metrica | dipende dalla metrica |
+evaluation_results.json (array delle metriche) | [].unit | stringa | sempre per elemento | N/D | N/D | Unità tecnica fissa.
+
+METRICHE IN evaluation_results.json
+ID | NAME | UNIT | MIN VALUE | MAX VALUE | DIREZIONE
+--------------------------------------------------------------------------------------
+1 | TC_norm | ratio | 0 | nessun limite implementato | minimizzare
+2 | TC_w | ratio | 0 | nessun limite implementato | minimizzare
+3 | documents_ratio | documents/result | 0 | nessun limite implementato | minimizzare
+4 | volume_ratio | ratio | 0 | nessun limite implementato | minimizzare
+5 | intermediate_results | elements/query | 0 | nessun limite implementato | minimizzare
+6 | working_set | ratio | 0 | nessun limite implementato | minimizzare
+7 | index_memory | ratio | 0 | nessun limite implementato | minimizzare
+8 | temporary_storage | ratio | 0 | nessun limite implementato | minimizzare
+9 | document_margin | ratio | 0 | 1 | massimizzare
+10 | document_growth | ratio | 0 | nessun limite implementato | minimizzare
+11 | network_volume | bytes/query | 0 | nessun limite implementato | minimizzare
+12 | storage_space | bytes | 0 | nessun limite implementato | minimizzare
+13 | TW_norm | ratio | 0 | 1 | massimizzare
+14 | update_documents | documents/update | 0 | nessun limite implementato | minimizzare
+15 | rewrite_ratio | ratio | 0 | nessun limite implementato | minimizzare
+16 | multi_document_updates | ratio | 0 | 1 | minimizzare
+17 | lifecycle_volume | bytes | 0 | nessun limite implementato | minimizzare

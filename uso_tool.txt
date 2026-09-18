@@ -1,0 +1,45 @@
+1. REQUISITI
+- Python 3.12
+
+2. FILE DI INPUT
+Modalità A - generazione e selezione:
+  python3 main_clean_obf_1_4.py er_schema.json data_system.json
+
+Modalità B - valutazione di uno schema già etichettato:
+  python3 main_clean_obf_1_4.py labeled_schema.json data_system.json
+
+Il programma riconosce automaticamente la modalità.
+
+3. SCELTA DELLE METRICHE
+In modalità A bisogna inserire esattamente 5 metriche, digitando 5 numeri
+distinti compresi tra 1 e 17.
+
+In modalità B si possono inserire una o più metriche. Premendo Invio senza
+scrivere numeri, il tool tenta di calcolare tutte le 17 metriche.
+
+4. OUTPUT
+I file vengono scritti nella cartella output della directory corrente.
+
+Modalità A:
+  output/evaluation_results.json
+  output/labeled_schema.json
+
+Modalità B:
+  output/evaluation_results.json
+
+5. ESEMPIO COMPLETO
+La cartella ex contiene:
+  er_schema.json      schema ER di esempio
+  data_system.json    secondo file di input, con tutti i dati previsti almeno una volta
+  labeled_schema.json schema etichettato riutilizzabile come primo input
+
+Esempio modalità A:
+  python3 main_clean_obf_1_4.py ex/er_schema.json ex/data_system.json
+
+Esempio modalità B:
+  python3 main_clean_obf_1_4.py ex/labeled_schema.json ex/data_system.json
+
+6. DATI FACOLTATIVI E ZERO
+Se un dato facoltativo non è disponibile, va omesso.
+Il valore 0 è invece un valore reale. Va usato solo quando il dato è realmente
+zero e questo valore è ammesso.
